@@ -19,7 +19,27 @@ resource "aws_subnet" "myapp-subnet-1" {
   
 }
 
-#data "aws_vpc" "existing_vpc" {
+resource "aws_route_table" "myapp-route-table" {
+    vpc_id = aws_vpc.myapp-vpc.id
+
+    route = {
+        cidr_block = "0.0.0.0/0"
+        gateway_id = aws_internet_gateway.myapp-igw.id
+    }
+    tags = {
+        Name = "${var.env_prefix}-route-table"
+    }
+}
+
+resource "aws_internet_gateway" "myapp-igw" {
+    vpc_id = aws_vpc.myapp-vpc.id
+    tags = {
+        Name = "${var.env_prefix}-igw"
+    }
+  
+}
+
+#data "aws_vpc" "existing_vpc" 
 #    default = true 
 #    tags = {
 #        Name = "default"      
