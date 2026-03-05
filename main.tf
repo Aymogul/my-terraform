@@ -60,8 +60,9 @@ resource "aws_default_route_table" "main-rtb" {
   }
 }
 
+
 resource "aws_security_group" "myapp-sg" {
-  name       = "${var.env_prefix}myapp-sg"
+  name       = "myapp-sg"
   description = "Allow SSH and HTTP traffic"
   vpc_id     = aws_vpc.myapp-vpc.id
 
@@ -71,19 +72,24 @@ resource "aws_security_group" "myapp-sg" {
     protocol  = "tcp"
     cidr_blocks = var.my_ip
   }
+  ingress = {
+    from_port = 8080
+    to_port   = 8080
+    protocol  = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
   egress {
     from_port = 0
     to_port   = 0
     protocol  = "-1"
     cidr_blocks = ["0.0.0.0/0"]
+    prefix_list_ids = [  ]
+  }
+  tags = {
+    Name = "${var.env_prefix}-sg"
   }
 }
-
-
-
-
-
-
 
 #data "aws_vpc" "existing_vpc" 
 #    default = true 
