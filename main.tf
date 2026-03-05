@@ -93,8 +93,7 @@ resource "aws_security_group" "myapp-sg" {
 
 # Just in case you want to use the existing default security group, here is the syntax for that.
   resource "aws_default_security_group" "default-sg" {
-  description = "Allow SSH and HTTP traffic"
-  vpc_id     = aws_vpc.myapp-vpc.id
+    vpc_id     = aws_vpc.myapp-vpc.id
 
   ingress {
     from_port = 22
@@ -119,6 +118,10 @@ resource "aws_security_group" "myapp-sg" {
   tags = {
     Name = "${var.env_prefix}-default-sg"
   }
+}
+
+resource "aws_instance" "myapp-webapp" {
+  ami = data.aws_ami.amazon-2.id
 }
 
 
