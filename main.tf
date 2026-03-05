@@ -28,7 +28,7 @@ resource "aws_internet_gateway" "myapp-igw" {
 }
 
 #this is the rtb i created first before considering the default rtb, so I will keep it here for reference. You can choose to use this or the default rtb, but not both at the same time.
-resource "aws_route_table" "myapp-route-table" {
+/*resource "aws_route_table" "myapp-route-table" {
     vpc_id = aws_vpc.myapp-vpc.id
     
     route {
@@ -45,7 +45,7 @@ resource "aws_route_table_association" "myapp-route-table-association" {
     subnet_id = aws_subnet.myapp-subnet-1.id
     route_table_id = aws_route_table.myapp-route-table.id
   
-}
+}*/
 
 # In case you want to use the existing default route table, and you will not need to add rtb-subnet association anymore if you are using this.
 resource "aws_default_route_table" "main-rtb" {
@@ -59,6 +59,32 @@ resource "aws_default_route_table" "main-rtb" {
     Name = "${var.env_prefix}-main-rtb"
   }
 }
+
+resource "aws_security_group" "myapp-sg" {
+  name       = "${var.env_prefix}myapp-sg"
+  description = "Allow SSH and HTTP traffic"
+  vpc_id     = aws_vpc.myapp-vpc.id
+
+  ingress {
+    from_port = 22
+    to_port   = 22
+    protocol  = "tcp"
+    cidr_blocks = [  ]
+  }
+  egress {
+    from_port = 0
+    to_port   = 0
+    protocol  = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+
+
+
+
+
+
+
 #data "aws_vpc" "existing_vpc" 
 #    default = true 
 #    tags = {
