@@ -18,7 +18,16 @@ resource "aws_subnet" "myapp-subnet-1" {
     }
   
 }
+#iInternet gateway is needed to allow the subnet to have internet access, and it needs to be attached to the vpc first before creating the route table and route.
+resource "aws_internet_gateway" "myapp-igw" {
+    vpc_id = aws_vpc.myapp-vpc.id
+    tags = {
+        Name = "${var.env_prefix}-igw"
+    }
+  
+}
 
+#this is the rtb i created first before considering the default rtb, so I will keep it here for reference. You can choose to use this or the default rtb, but not both at the same time.
 resource "aws_route_table" "myapp-route-table" {
     vpc_id = aws_vpc.myapp-vpc.id
     
@@ -31,20 +40,14 @@ resource "aws_route_table" "myapp-route-table" {
     }
 }
 
-resource "aws_internet_gateway" "myapp-igw" {
-    vpc_id = aws_vpc.myapp-vpc.id
-    tags = {
-        Name = "${var.env_prefix}-igw"
-    }
-  
-}
+
 resource "aws_route_table_association" "myapp-route-table-association" {
     subnet_id = aws_subnet.myapp-subnet-1.id
     route_table_id = aws_route_table.myapp-route-table.id
   
 }
 
-# In case you want to use the existing default route table
+# In case you want to use the existing default route table, and you will not need to add rtb-subnet association anymore if you are using this.
 resource "aws_default_route_table" "main-rtb" {
   default_route_table_id = aws_vpc.myapp-vpc.default_route_table_id
 
@@ -53,7 +56,7 @@ resource "aws_default_route_table" "main-rtb" {
     gateway_id = aws_internet_gateway.myapp-igw.id
   }
   tags = {
-    Name = "${var.env_prefix}-default-route-table"
+    Name = "${var.env_prefix}-main-rtb"
   }
 }
 #data "aws_vpc" "existing_vpc" 
