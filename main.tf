@@ -38,11 +38,23 @@ resource "aws_internet_gateway" "myapp-igw" {
     }
   
 }
-
 resource "aws_route_table_association" "myapp-route-table-association" {
     subnet_id = aws_subnet.myapp-subnet-1.id
     route_table_id = aws_route_table.myapp-route-table.id
   
+}
+
+# In case you want to use the existing default route table
+resource "aws_default_route_table" "main-rtb" {
+  default_route_table_id = aws_vpc.myapp-vpc.default_route_table_id
+
+  route {
+    cidr_block = "0.0.0.0/0"
+    gateway_id = aws_internet_gateway.myapp-igw.id
+  }
+  tags = {
+    Name = "${var.env_prefix}-default-route-table"
+  }
 }
 #data "aws_vpc" "existing_vpc" 
 #    default = true 
