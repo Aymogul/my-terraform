@@ -70,9 +70,9 @@ resource "aws_security_group" "myapp-sg" {
     from_port = 22
     to_port   = 22
     protocol  = "tcp"
-    cidr_blocks = var.my_ip
+    cidr_blocks = [var.my_ip]
   }
-  ingress = {
+  ingress {
     from_port = 8080
     to_port   = 8080
     protocol  = "tcp"
@@ -90,6 +90,37 @@ resource "aws_security_group" "myapp-sg" {
     Name = "${var.env_prefix}-sg"
   }
 }
+
+# Just in case you want to use the existing default security group, here is the syntax for that.
+  resource "aws_default_security_group" "default-sg" {
+  description = "Allow SSH and HTTP traffic"
+  vpc_id     = aws_vpc.myapp-vpc.id
+
+  ingress {
+    from_port = 22
+    to_port   = 22
+    protocol  = "tcp"
+    cidr_blocks = [var.my_ip]
+  }
+  ingress {
+    from_port = 8080
+    to_port   = 8080
+    protocol  = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    from_port = 0
+    to_port   = 0
+    protocol  = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+    prefix_list_ids = [  ]
+  }
+  tags = {
+    Name = "${var.env_prefix}-default-sg"
+  }
+}
+
 
 #data "aws_vpc" "existing_vpc" 
 #    default = true 
