@@ -119,6 +119,10 @@ resource "aws_security_group" "myapp-sg" {
     Name = "${var.env_prefix}-default-sg"
   }
 }
+resource "aws_key_pair" "ssh-key" {
+  key_name   = "server-key"
+  public_key = "${file("var.public_key_location")}"
+}
 
 resource "aws_instance" "myapp-webapp" {
   ami = data.aws_ami.amazon-2.id
@@ -127,7 +131,7 @@ resource "aws_instance" "myapp-webapp" {
   vpc_security_group_ids = [aws_security_group.myapp-sg.id, aws_default_security_group.default-sg.id]
   availability_zone = var.avail_zone
   associate_public_ip_address = true
-  key_name = "server-key-pair"
+  key_name = aws_key_pair.ssh-key.key_name
 
   tags = {
     Name = "${var.env_prefix}-server"
