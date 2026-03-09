@@ -127,7 +127,7 @@ resource "aws_instance" "myapp-webapp" {
   vpc_security_group_ids = [aws_security_group.myapp-sg.id, aws_default_security_group.default-sg.id]
   availability_zone = var.avail_zone
   associate_public_ip_address = true
-  key_name = server-key-pair
+  key_name = "server-key-pair"
 
   tags = {
     Name = "${var.env_prefix}-server"
