@@ -121,7 +121,7 @@ resource "aws_security_group" "myapp-sg" {
 }
 resource "aws_key_pair" "ssh-key" {
   key_name   = "server-key"
-  public_key = "${file("var.public_key_location")}"
+  public_key = file(var.public_key_location)
 }
 
 resource "aws_instance" "myapp-webapp" {
