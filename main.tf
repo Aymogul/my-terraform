@@ -133,6 +133,12 @@ resource "aws_instance" "myapp-webapp" {
   associate_public_ip_address = true
   key_name = aws_key_pair.ssh-key.key_name
 
+  user_data = <<EOF
+                  #!/bin/bash
+                  sudo yum update -y && sudo yum install -y docker
+                  sudo systemctl start docker
+  
+              EOF
   tags = {
     Name = "${var.env_prefix}-server"
   }
